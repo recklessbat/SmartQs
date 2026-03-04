@@ -10,6 +10,17 @@ const generateBtn = document.getElementById('generateBtn');
 const outputSection = document.getElementById('outputSection');
 const generatedQuestion = document.getElementById('generatedQuestion');
 const copyBtn = document.getElementById('copyBtn');
+const clearBtn = document.getElementById('clearBtn');
+const historyToggle = document.getElementById('historyToggle');
+const historyPanel = document.getElementById('historyPanel');
+const historyOverlay = document.getElementById('historyOverlay');
+const historyCloseBtn = document.getElementById('historyCloseBtn');
+const historyList = document.getElementById('historyList');
+const historyEmpty = document.getElementById('historyEmpty');
+const historyClearAll = document.getElementById('historyClearAll');
+
+// ── History state ──
+let history = [];
 
 // ── Slider value display ──
 complexitySlider.addEventListener('input', () => {
@@ -32,22 +43,25 @@ generateBtn.addEventListener('click', () => {
   const category = categoryInput.value.trim();
   if (!category) return;
 
+  const complexity = parseInt(complexitySlider.value);
+  const strategy = parseInt(strategySlider.value);
+  const genz = parseInt(genzSlider.value);
+
   generateBtn.classList.add('loading');
   generateBtn.textContent = 'Generating...';
 
   // Simulate a brief delay for perceived quality
   setTimeout(() => {
-    const question = buildQuestion(
-      category,
-      parseInt(complexitySlider.value),
-      parseInt(strategySlider.value),
-      parseInt(genzSlider.value)
-    );
+    const question = buildQuestion(category, complexity, strategy, genz);
 
     generatedQuestion.textContent = question;
     outputSection.classList.add('visible');
     generateBtn.classList.remove('loading');
     generateBtn.textContent = 'Generate Question';
+
+    // Add to history
+    history.unshift({ question, category, complexity, strategy, genz });
+    renderHistory();
   }, 600);
 });
 
@@ -66,6 +80,61 @@ copyBtn.addEventListener('click', () => {
     setTimeout(() => copyBtn.classList.remove('copied'), 1500);
   });
 });
+
+// ── Clear generated response ──
+clearBtn.addEventListener('click', () => {
+  outputSection.classList.remove('visible');
+  generatedQuestion.textContent = '';
+});
+
+// ── History panel ──
+function openHistory() {
+  historyPanel.classList.add('open');
+  historyOverlay.classList.add('open');
+}
+
+function closeHistory() {
+  historyPanel.classList.remove('open');
+  historyOverlay.classList.remove('open');
+}
+
+historyToggle.addEventListener('click', openHistory);
+historyCloseBtn.addEventListener('click', closeHistory);
+historyOverlay.addEventListener('click', closeHistory);
+
+historyClearAll.addEventListener('click', () => {
+  history = [];
+  renderHistory();
+});
+
+function renderHistory() {
+  const items = historyList.querySelectorAll('.history-item');
+  items.forEach((item) => item.remove());
+
+  historyEmpty.style.display = history.length === 0 ? 'block' : 'none';
+
+  history.forEach((entry) => {
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    item.innerHTML =
+      '<p class="history-item-question"></p>' +
+      '<div class="history-item-meta">' +
+        '<span class="history-tag"></span>' +
+        '<span class="history-tag"></span>' +
+        '<span class="history-tag"></span>' +
+        '<span class="history-tag"></span>' +
+      '</div>';
+
+    item.querySelector('.history-item-question').textContent = entry.question;
+    const tags = item.querySelectorAll('.history-tag');
+    tags[0].textContent = entry.category;
+    tags[1].textContent = 'Complexity ' + entry.complexity;
+    tags[2].textContent = 'Strategy ' + entry.strategy;
+    tags[3].textContent = 'Gen Z ' + entry.genz;
+
+    historyList.appendChild(item);
+  });
+}
 
 // ── Question Bank ──
 // Organized by complexity × strategic focus, with Gen Z overlay applied after

@@ -10,8 +10,32 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- History Panel -->
+  <div class="history-overlay" id="historyOverlay"></div>
+  <aside class="history-panel" id="historyPanel">
+    <div class="history-header">
+      <h2>History</h2>
+      <button class="history-close-btn" id="historyCloseBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="history-list" id="historyList">
+      <p class="history-empty" id="historyEmpty">No questions generated yet.</p>
+    </div>
+    <button class="history-clear-all" id="historyClearAll">Clear All History</button>
+  </aside>
+
   <div class="app">
     <header class="header">
+      <button class="history-toggle" id="historyToggle" title="View history">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </button>
       <h1 class="logo">SmartQs</h1>
       <p class="subtitle">AI-Enabled Future of HR &amp; Employee Experience</p>
     </header>
@@ -78,6 +102,7 @@
             </svg>
           </button>
         </div>
+        <button class="clear-btn" id="clearBtn">Clear</button>
       </section>
     </main>
 
